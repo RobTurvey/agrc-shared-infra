@@ -1,0 +1,22 @@
+SHELL := /bin/bash
+
+AGENT_RUNTIME ?= container-beads
+
+.PHONY: agent-runtime-check agent-runtime-resolve agent-init agent-qa-check
+
+agent-runtime-check:
+	@if [ "$(AGENT_RUNTIME)" != "container-beads" ] && [ "$(AGENT_RUNTIME)" != "local-lite" ]; then \
+		echo "Invalid AGENT_RUNTIME='$(AGENT_RUNTIME)'"; \
+		exit 1; \
+	fi
+	@echo "Runtime: $(AGENT_RUNTIME)"
+
+agent-runtime-resolve:
+	@$(MAKE) --no-print-directory agent-runtime-check
+
+agent-init:
+	@if [ -z "$(ISSUE)" ]; then echo "Usage: make agent-init ISSUE=<id> ACTOR=<...>"; exit 1; fi
+	@echo "Initialize task $(ISSUE) with actor $(ACTOR)"
+
+agent-qa-check:
+	@echo "Run lint/test/build + checklist update"

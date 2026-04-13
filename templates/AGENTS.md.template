@@ -1,0 +1,16 @@
+# Agent Instructions (Template)
+
+## Runtime Modes
+- `container-beads`: Beads enabled and required for issue tracking
+- `local-lite`: host-only workflows, no direct Beads commands
+
+## Session Start
+```bash
+make agent-runtime-resolve
+make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/roo|agrc/claude>
+```
+
+## Core Rules
+- Use Beads as system of record.
+- Keep milestone comments and structured notes current.
+- Run QA gate before closure.

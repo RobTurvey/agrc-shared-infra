@@ -1,0 +1,9 @@
+SHELL := /bin/bash
+
+.PHONY: verify-layout verify-skill
+
+verify-layout:
+	@./scripts/verify_layout.sh
+
+verify-skill:
+	@./.agents/skills/shared_infra_bootstrap/scripts/check_shared_infra_ready.py --root .
