@@ -1,0 +1,102 @@
+{
+  "dry_run": true,
+  "project_key": "DEV",
+  "label": "from-beads",
+  "count": 2,
+  "items": [
+    {
+      "beads_id": "agrc-auf",
+      "action": "upsert",
+      "jira": {
+        "fields": {
+          "project": {
+            "key": "DEV"
+          },
+          "summary": "Continuous System and Process Improvements",
+          "issuetype": {
+            "name": "Epic"
+          },
+          "labels": [
+            "from-beads"
+          ],
+          "description": {
+            "type": "doc",
+            "version": 1,
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "beads_id: agrc-auf"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Track ongoing improvements to development workflow, devcontainer reliability, bd restart safety, and team operating process."
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "meta": {
+        "status": "open",
+        "priority": 1,
+        "issue_type": "epic"
+      }
+    },
+    {
+      "beads_id": "agrc-auf.3",
+      "action": "upsert",
+      "jira": {
+        "fields": {
+          "project": {
+            "key": "DEV"
+          },
+          "summary": "Establish daily Jira↔Beads sync process and skill package",
+          "issuetype": {
+            "name": "Task"
+          },
+          "labels": [
+            "from-beads"
+          ],
+          "description": {
+            "type": "doc",
+            "version": 1,
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "beads_id: agrc-auf.3"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Create and document a low-automation-cost daily Jira sync process for Beads-managed work under DEV project, plus implement reusable agent skill package beads_jira_sync."
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "meta": {
+        "status": "in_progress",
+        "priority": 1,
+        "issue_type": "task"
+      }
+    }
+  ]
+}

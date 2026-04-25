@@ -1,0 +1,19 @@
+[
+  {
+    "id": "agrc-auf",
+    "title": "Continuous System and Process Improvements",
+    "description": "Track ongoing improvements to development workflow, devcontainer reliability, bd restart safety, and team operating process.",
+    "status": "open",
+    "priority": 1,
+    "issue_type": "epic"
+  },
+  {
+    "id": "agrc-auf.3",
+    "title": "Establish daily Jira↔Beads sync process and skill package",
+    "description": "Create and document a low-automation-cost daily Jira sync process for Beads-managed work under DEV project, plus implement reusable agent skill package beads_jira_sync.",
+    "status": "in_progress",
+    "priority": 1,
+    "issue_type": "task"
+  }
+]
+

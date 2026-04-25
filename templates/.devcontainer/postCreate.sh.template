@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "[postCreate] Shared infra devcontainer bootstrap starting"
+
+if command -v node >/dev/null 2>&1; then
+  node --version
+fi
+
+if command -v npm >/dev/null 2>&1; then
+  npm --version
+fi
+
+if command -v python3 >/dev/null 2>&1; then
+  python3 --version
+fi
+
+if ! command -v bd >/dev/null 2>&1; then
+  echo "[postCreate] Installing bd from gastownhall/beads..."
+  curl -fsSL https://raw.githubusercontent.com/gastownhall/beads/main/scripts/install.sh | bash || true
+fi
+
+echo "[postCreate] Bootstrap complete"

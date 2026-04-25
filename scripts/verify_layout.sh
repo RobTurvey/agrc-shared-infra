@@ -12,8 +12,15 @@ required=(
   ".github/skills"
   ".agent/profiles"
   "templates"
+  "templates/.devcontainer"
+  "templates/.vscode"
+  "docs"
   "scripts"
   "README.md"
+  "Dockerfile"
+  ".devcontainer/devcontainer.json"
+  ".devcontainer/postCreate.sh"
+  "docs/skills_and_components_classification.md"
 )
 
 missing=0

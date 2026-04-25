@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "items": {
+    "agrc-auf": {
+      "jira_key": "DEV-5",
+      "jira_type": "Epic",
+      "updated_at": 1774090233
+    },
+    "agrc-auf.3": {
+      "jira_key": "DEV-6",
+      "jira_type": "Subtask",
+      "updated_at": 1774090235
+    }
+  }
+}

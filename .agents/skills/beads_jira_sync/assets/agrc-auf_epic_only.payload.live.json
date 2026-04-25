@@ -1,0 +1,55 @@
+{
+  "dry_run": true,
+  "project_key": "DEV",
+  "label": "from-beads",
+  "count": 1,
+  "items": [
+    {
+      "beads_id": "agrc-auf",
+      "action": "upsert",
+      "jira": {
+        "fields": {
+          "project": {
+            "key": "DEV"
+          },
+          "summary": "Continuous System and Process Improvements",
+          "issuetype": {
+            "name": "Epic"
+          },
+          "labels": [
+            "from-beads"
+          ],
+          "description": {
+            "type": "doc",
+            "version": 1,
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "beads_id: agrc-auf"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Track ongoing improvements to development workflow, devcontainer reliability, bd restart safety, and team operating process. Add discovered improvement tasks under this epic during normal development."
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "meta": {
+        "status": "open",
+        "priority": 1,
+        "issue_type": "epic"
+      }
+    }
+  ]
+}

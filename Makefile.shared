@@ -1,9 +1,20 @@
 SHELL := /bin/bash
 
-.PHONY: verify-layout verify-skill
+.PHONY: verify-layout verify-skill verify-templates show-classification
 
 verify-layout:
 	@./scripts/verify_layout.sh
 
 verify-skill:
 	@./.agents/skills/shared_infra_bootstrap/scripts/check_shared_infra_ready.py --root .
+
+verify-templates:
+	@test -f templates/.devcontainer/devcontainer.json.template
+	@test -f templates/.devcontainer/postCreate.sh.template
+	@test -f templates/.vscode/settings.json.template
+	@test -f templates/.vscode/mcp.json.template
+	@test -f docs/skills_and_components_classification.md
+	@echo "PASS: shared template inventory complete"
+
+show-classification:
+	@sed -n '1,260p' docs/skills_and_components_classification.md

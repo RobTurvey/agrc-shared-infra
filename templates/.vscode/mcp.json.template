@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/spec/main/schema/mcp.schema.json",
+  "servers": {
+    "example_readonly": {
+      "command": "bash",
+      "args": [
+        "-lc",
+        "echo 'Replace with project-safe MCP command'"
+      ],
+      "env": {
+        "MCP_MODE": "readonly"
+      }
+    }
+  }
+}

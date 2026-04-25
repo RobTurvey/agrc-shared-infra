@@ -1,0 +1,25 @@
+{
+  "name": "agrc-shared-infra-dev",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": ".."
+  },
+  "mounts": [
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.aws,target=/home/node/.aws,type=bind,consistency=cached"
+  ],
+  "containerEnv": {
+    "AWS_SDK_LOAD_CONFIG": "1",
+    "BD_INSTALL_CMD": "curl -fsSL https://raw.githubusercontent.com/gastownhall/beads/main/scripts/install.sh | bash"
+  },
+  "postCreateCommand": "bash .devcontainer/postCreate.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "github.copilot",
+        "github.copilot-chat",
+        "rooveterinaryinc.roo-cline",
+        "anthropic.claude-code"
+      ]
+    }
+  }
+}

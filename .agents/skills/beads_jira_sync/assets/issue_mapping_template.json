@@ -1,0 +1,27 @@
+{
+  "project_key": "DEV",
+  "sync_label": "from-beads",
+  "source_of_truth": "beads",
+  "beads_to_jira": {
+    "id": "traceability_marker",
+    "title": "summary",
+    "description": "description",
+    "priority": "priority",
+    "status": "status_policy_based"
+  },
+  "traceability": {
+    "marker_format": "beads_id: {beads_id}",
+    "store_in": [
+      "description",
+      "comment"
+    ]
+  },
+  "write_policy": {
+    "dry_run_required": true,
+    "allow_create": true,
+    "allow_update": true,
+    "allow_comment": true,
+    "overwrite_description": false
+  }
+}
+
