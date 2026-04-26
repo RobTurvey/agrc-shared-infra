@@ -1,20 +1,270 @@
 SHELL := /bin/bash
 
-.PHONY: verify-layout verify-skill verify-templates show-classification
+PREFIX ?= td
+AGENT_RUNTIME ?= container-beads
+SELF_MAKEFILE ?= Makefile.shared
+BEADS_UI_PORT ?= 3002
 
-verify-layout:
-	@./scripts/verify_layout.sh
+.PHONY: project-bootstrap dolt-start mem-ready mem-show mem-claim mem-close mem-handoff mem-next mem-active mem-ops mem-all mem-wallet mem-snapshot mem-recover mem-restart beads-ui beads-ui-stop beads-ui-restart beads-ui-up post-rebuild-check agent-runtime-detect agent-runtime-resolve agent-runtime-check agent-init agent-repro agent-qa-check agent-append-note agent-comment-checklist web-presale web-presale-build web-presale-preview refresh-test-site
 
-verify-skill:
-	@./.agents/skills/shared_infra_bootstrap/scripts/check_shared_infra_ready.py --root .
+project-bootstrap:
+	@echo "Bootstrapping Beads in current repo with prefix $(PREFIX)..."
+	@mkdir -p .beads .agent docs
+	@if [ ! -f .beads/config.yaml ] && [ -f templates/beads-config.yaml.template ]; then cp templates/beads-config.yaml.template .beads/config.yaml; fi
+	@if [ ! -f .agent/copilot.md ] && [ -f templates/agent-copilot.md.template ]; then cp templates/agent-copilot.md.template .agent/copilot.md; fi
+	@if [ ! -f .agent/agent-x.md ] && [ -f templates/agent-x.md.template ]; then cp templates/agent-x.md.template .agent/agent-x.md; fi
+	@if [ ! -f .gitignore ] && [ -f templates/gitignore.template ]; then cp templates/gitignore.template .gitignore; fi
+	@if bd info >/dev/null 2>&1; then \
+		echo "Beads already initialized in this repo."; \
+	else \
+		bd init --prefix $(PREFIX); \
+	fi
+	@echo "Bootstrap complete. Next: make mem-ready"
 
-verify-templates:
-	@test -f templates/.devcontainer/devcontainer.json.template
-	@test -f templates/.devcontainer/postCreate.sh.template
-	@test -f templates/.vscode/settings.json.template
-	@test -f templates/.vscode/mcp.json.template
-	@test -f docs/skills_and_components_classification.md
-	@echo "PASS: shared template inventory complete"
+dolt-start:
+	@echo "Ensuring bd-managed Dolt server is running..."
+	@bd dolt start >/dev/null
+	@bd dolt status
 
-show-classification:
-	@sed -n '1,260p' docs/skills_and_components_classification.md
+mem-ready:
+	bd ready
+
+mem-show:
+	@if [ -z "$(ISSUE)" ]; then echo "Usage: make mem-show ISSUE=<id>"; exit 1; fi
+	bd show $(ISSUE)
+
+mem-claim:
+	@if [ -z "$(ISSUE)" ]; then echo "Usage: make mem-claim ISSUE=<id>"; exit 1; fi
+	@if [ "$(AGENT_RUNTIME)" = "container-beads" ]; then \
+		bd update $(ISSUE) --claim; \
+	else \
+		echo "AGENT_RUNTIME=$(AGENT_RUNTIME): skipping bd claim for $(ISSUE)."; \
+		echo "Record claim in PR_DESCRIPTION.md or your local tracker."; \
+	fi
+
+mem-close:
+	@if [ -z "$(ISSUE)" ]; then echo "Usage: make mem-close ISSUE=<id>"; exit 1; fi
+	@if [ "$(AGENT_RUNTIME)" = "container-beads" ]; then \
+		bd close $(ISSUE); \
+	else \
+		echo "AGENT_RUNTIME=$(AGENT_RUNTIME): skipping bd close for $(ISSUE)."; \
+		echo "Mark completion in PR_DESCRIPTION.md or your local tracker."; \
+	fi
+
+mem-handoff:
+	bd export -o .beads/issues.jsonl
+	@echo "Session handoff complete."
+
+agent-runtime-detect:
+	@detected="local-lite"; source="detected"; \
+	if [ "$(origin AGENT_RUNTIME)" = "command line" ] || [ "$(origin AGENT_RUNTIME)" = "environment" ] || [ "$(origin AGENT_RUNTIME)" = "environment override" ]; then \
+		detected="$(AGENT_RUNTIME)"; source="explicit"; \
+	elif [ -f /.dockerenv ] || grep -qaE "docker|containerd|kubepods" /proc/1/cgroup 2>/dev/null || [ -n "$$REMOTE_CONTAINERS$$DEVCONTAINER$$CODESPACES" ]; then \
+		detected="container-beads"; \
+	fi; \
+	echo "Runtime: $$detected (source=$$source)"; \
+	if [ "$$detected" = "container-beads" ]; then \
+		echo "Mode: Beads required (container workflow)."; \
+	else \
+		echo "Mode: Beads optional (local workflow)."; \
+	fi
+
+agent-runtime-resolve:
+	@detected="local-lite"; source="detected"; \
+	if [ "$(origin AGENT_RUNTIME)" = "command line" ] || [ "$(origin AGENT_RUNTIME)" = "environment" ] || [ "$(origin AGENT_RUNTIME)" = "environment override" ]; then \
+		detected="$(AGENT_RUNTIME)"; source="explicit"; \
+	elif [ -f /.dockerenv ] || grep -qaE "docker|containerd|kubepods" /proc/1/cgroup 2>/dev/null || [ -n "$$REMOTE_CONTAINERS$$DEVCONTAINER$$CODESPACES" ]; then \
+		detected="container-beads"; \
+	fi; \
+	echo "Resolved runtime candidate: $$detected (source=$$source)"; \
+	if [ "$$detected" != "container-beads" ] && [ "$$detected" != "local-lite" ]; then \
+		echo "Invalid resolved runtime '$$detected'. Use one of: container-beads | local-lite"; \
+		exit 1; \
+	fi; \
+	$(MAKE) --no-print-directory -f $(SELF_MAKEFILE) agent-runtime-check AGENT_RUNTIME=$$detected; \
+	echo "Next: make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/roo> AGENT_RUNTIME=$$detected"
+
+agent-runtime-check:
+	@if [ "$(AGENT_RUNTIME)" != "container-beads" ] && [ "$(AGENT_RUNTIME)" != "local-lite" ]; then \
+		echo "Invalid AGENT_RUNTIME='$(AGENT_RUNTIME)'. Use one of: container-beads | local-lite"; \
+		exit 1; \
+	fi
+	@echo "Runtime: $(AGENT_RUNTIME)"
+	@if [ "$(AGENT_RUNTIME)" = "container-beads" ]; then \
+		echo "Mode: Beads required (container workflow)."; \
+	else \
+		echo "Mode: Beads optional (local workflow)."; \
+	fi
+
+agent-init:
+	@if [ -z "$(ISSUE)" ]; then echo "Usage: make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/roo>"; exit 1; fi
+	@$(MAKE) -f $(SELF_MAKEFILE) agent-runtime-check
+	@if [ "$(AGENT_RUNTIME)" = "container-beads" ]; then \
+		if [ -n "$(ACTOR)" ]; then BD_ACTOR="$(ACTOR)" bd update $(ISSUE) --claim --json >/dev/null; else bd update $(ISSUE) --claim --json >/dev/null; fi; \
+		$(MAKE) -f $(SELF_MAKEFILE) mem-show ISSUE=$(ISSUE); \
+	else \
+		echo "AGENT_RUNTIME=$(AGENT_RUNTIME): local-lite mode (no bd required)."; \
+		echo "- Confirm scope + acceptance criteria for $(ISSUE)"; \
+		echo "- Record PASS/NITS/FAIL and mandatory checklist in PR_DESCRIPTION.md"; \
+		echo "- Keep issue state in your external tracker if used"; \
+	fi
+	@echo "Agent initialization complete for $(ISSUE) (runtime: $(AGENT_RUNTIME))."
+
+agent-repro:
+	@echo "PWD=$$PWD"
+	@uname -srm
+	@echo "node=$$(node -v)"
+	@echo "npm=$$(npm -v)"
+	@echo "make=$$(make -v | head -n1)"
+	@echo "git=$$(git --version)"
+	@echo "bd=$$(bd --help | head -n1)"
+	@if command -v code >/dev/null 2>&1; then \
+		echo "vscode_cli=present"; \
+		if code --list-extensions; then \
+			echo "vscode_extensions=ok"; \
+		else \
+			echo "vscode_extensions=unavailable (non-fatal)"; \
+		fi; \
+	else \
+		echo "vscode_cli=absent"; \
+	fi
+
+post-rebuild-check:
+	@echo "Running post-rebuild checks (runtime: $(AGENT_RUNTIME))..."
+	@$(MAKE) -f $(SELF_MAKEFILE) agent-runtime-check
+	@if [ "$(AGENT_RUNTIME)" = "container-beads" ]; then \
+		$(MAKE) -f $(SELF_MAKEFILE) dolt-start; \
+		$(MAKE) -f $(SELF_MAKEFILE) mem-restart; \
+		$(MAKE) -f $(SELF_MAKEFILE) beads-ui-up; \
+	else \
+		echo "AGENT_RUNTIME=$(AGENT_RUNTIME): skipping mem-restart/dolt-start/beads-ui-up (bd not required)."; \
+	fi
+	@$(MAKE) -f $(SELF_MAKEFILE) agent-repro
+	@$(MAKE) -f $(SELF_MAKEFILE) agent-qa-check
+	@echo "Post-rebuild checks complete. Next: make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/roo>"
+
+agent-qa-check:
+	@echo "QA gate checklist:" \
+	&& echo "1) Diff reviewed" \
+	&& echo "2) Relevant tests/lint/build run" \
+	&& echo "3) PASS/NITS/FAIL recorded with severity" \
+	&& echo "4) Mandatory epic/task comment checklist completed" \
+	&& echo "5) Issue notes updated via bd --append-notes" \
+	&& echo "6) Commit message includes issue ID"
+
+agent-comment-checklist:
+	@if [ -z "$(ISSUE)" ]; then echo "Usage: make agent-comment-checklist ISSUE=<id>"; exit 1; fi
+	@echo "Mandatory comment checklist for $(ISSUE):" \
+	&& echo "- What was done: ..." \
+	&& echo "- Files changed: ..." \
+	&& echo "- Validation run: ..." \
+	&& echo "- Risks/blockers: None|..." \
+	&& echo "- Next step: ..." \
+	&& echo "Recommended: use the note template helper or NOTE_FILE so the final Beads note stays human-readable." \
+	&& echo "Tip: make agent-append-note also converts \\n sequences into real line breaks."
+
+agent-append-note:
+	@if [ -z "$(ISSUE)" ] || { [ -z "$(NOTE)" ] && [ -z "$(NOTE_FILE)" ]; }; then echo "Usage: make agent-append-note ISSUE=<id> NOTE=\"text\""; echo "   or: make agent-append-note ISSUE=<id> NOTE_FILE=path/to/note.md"; exit 1; fi
+	@NOTE_TEXT="$$(if [ -n "$(NOTE_FILE)" ]; then cat "$(NOTE_FILE)"; else printf '%b' "$(NOTE)"; fi)"; \
+	if [ "$(AGENT_RUNTIME)" = "container-beads" ]; then \
+		bd update $(ISSUE) --append-notes "$$NOTE_TEXT" --json >/dev/null; \
+		echo "Appended formatted note to $(ISSUE)."; \
+	else \
+		printf "\n## Agent Note (%s) - %s\n%s\n" "$$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(ISSUE)" "$$NOTE_TEXT" >> PR_DESCRIPTION.md; \
+		echo "AGENT_RUNTIME=$(AGENT_RUNTIME): appended formatted note to PR_DESCRIPTION.md for $(ISSUE)."; \
+	fi
+
+mem-next:
+	@echo "Strict delivery pickup queue (open, non-epic, non-ops):"
+	bd list --json | jq -r '.[] | select(.status=="open") | select((.issue_type // .type // "") != "epic") | select(((.labels // []) | join(",") | ascii_downcase | test("ops|patrol|molecule|agent") | not)) | "\(.id)\tP\(.priority // 2)\t\(.status)\t\(.issue_type // .type // "task")\t\(.title)"'
+
+mem-active:
+	@echo "Active delivery view (in-progress and epics, non-ops):"
+	bd list --json | jq -r '.[] | select(.status=="in_progress" or (.issue_type // .type // "")=="epic") | select(((.labels // []) | join(",") | ascii_downcase | test("ops|patrol|molecule|agent") | not)) | "\(.id)\tP\(.priority // 2)\t\(.status)\t\(.issue_type // .type // "task")\t\(.title)"'
+
+mem-ops:
+	@echo "Operational triage view (active ops/patrol/molecule issues):"
+	bd list --json | jq -r '.[] | select(.status=="open" or .status=="in_progress") | select(((.labels // []) | join(",") | ascii_downcase | test("ops|patrol|molecule|agent")) or ((.issue_type // .type // "") | test("agent|ops|molecule|patrol")) or ((.id // "") | startswith("td-mol-")) or ((.title // "") | ascii_downcase | test("patrol|witness|refinery|wisp|inbox"))) | "\(.id)\tP\(.priority // 2)\t\(.status)\t\(.issue_type // .type // "task")\t\(.title)"'
+
+mem-all:
+	@echo "All issues (including closed):"
+	bd list --all --json | jq -r '.[] | "\(.id)\tP\(.priority // 2)\t\(.status)\t\(.issue_type // .type // "task")\t\(.title)"' | sort
+
+mem-wallet:
+	@echo "Wallet-related issues:"
+	bd list --all --json | jq -r '.[] | "\(.id)\tP\(.priority // 2)\t\(.status)\t\(.issue_type // .type // "task")\t\(.title)"' | grep -Ei 'wallet|ledger|safe|agrc-72d' || true
+
+mem-snapshot:
+	@mkdir -p docs/beads_snapshots
+	@ts=$$(date -u +%Y%m%dT%H%M%SZ); \
+		out="docs/beads_snapshots/issues-$$ts.json"; \
+		bd list --all --json > "$$out"; \
+		echo "Wrote $$out"
+
+mem-recover:
+	@echo "Running Beads recovery preflight..."
+	@$(MAKE) -f $(SELF_MAKEFILE) dolt-start
+	@bd config unset routing.contributor >/dev/null 2>&1 || true
+	@if bd status >/dev/null 2>&1; then \
+		echo "bd status: OK"; \
+	else \
+		echo "bd status failed; restoring from .beads/issues.jsonl..."; \
+		bd init --force --prefix agrc --from-jsonl --team --skip-hooks --quiet; \
+	fi
+	@bd status
+	@$(MAKE) -f $(SELF_MAKEFILE) mem-ready
+
+mem-restart:
+	@echo "Restarting Beads server + restoring issue history + refreshing UI prerequisites..."
+	@bd dolt stop >/dev/null 2>&1 || true
+	@$(MAKE) -f $(SELF_MAKEFILE) mem-recover
+	@echo "If needed, restart UI with: make beads-ui-restart"
+
+beads-ui:
+	@if ! command -v npx >/dev/null 2>&1; then echo "Missing: npx (install Node.js + npm)"; exit 1; fi
+	@BD_BIN="$$(command -v bd)" npx -y beads-ui@latest start --port $(BEADS_UI_PORT)
+
+beads-ui-stop:
+	@pids="$$(lsof -tiTCP:$(BEADS_UI_PORT) -sTCP:LISTEN 2>/dev/null || true)"; \
+	if [ -n "$$pids" ]; then \
+		kill $$pids >/dev/null 2>&1 || true; \
+	fi
+	@echo "Stopped beads-ui on port $(BEADS_UI_PORT) (if running)."
+
+beads-ui-restart: beads-ui-stop
+	@echo "Starting beads-ui on port $(BEADS_UI_PORT)..."
+	@$(MAKE) -f $(SELF_MAKEFILE) beads-ui
+
+beads-ui-up: beads-ui-stop
+	@echo "Starting beads-ui in background on port $(BEADS_UI_PORT)..."
+	@mkdir -p .beads
+	@nohup $(MAKE) -f $(SELF_MAKEFILE) beads-ui > .beads/beads-ui.log 2>&1 &
+	@for i in 1 2 3 4 5 6 7 8 9 10; do \
+		if lsof -tiTCP:$(BEADS_UI_PORT) -sTCP:LISTEN >/dev/null 2>&1; then \
+			echo "beads-ui: running (logs: .beads/beads-ui.log)"; \
+			exit 0; \
+		fi; \
+		sleep 1; \
+	done; \
+	if lsof -tiTCP:$(BEADS_UI_PORT) -sTCP:LISTEN >/dev/null 2>&1; then \
+		echo "beads-ui: running (logs: .beads/beads-ui.log)"; \
+	else \
+		echo "beads-ui: failed to start (check .beads/beads-ui.log)"; \
+		exit 1; \
+	fi
+
+web-presale:
+	@echo "Starting AGENTREALCOIN2 dev server on http://localhost:4321"
+	@cd AGENTREALCOIN2 && npm run dev -- --host --port 4321
+
+web-presale-build:
+	@echo "Building AGENTREALCOIN2 production bundle"
+	@cd AGENTREALCOIN2 && npm run build
+
+web-presale-preview:
+	@echo "Starting AGENTREALCOIN2 production preview on http://localhost:4321"
+	@cd AGENTREALCOIN2 && npm run preview -- --host --port 4321
+
+refresh-test-site:
+	@echo "Refreshing AGENTREALCOIN2-redesign from origin/claude/website-redesign-strategy-IkwMK and starting dev server on http://localhost:4323"
+	@cd /workspaces/base/AGENTREALCOIN2-redesign && git fetch origin && git reset --hard origin/claude/website-redesign-strategy-IkwMK && npm run dev -- --host --port 4323
