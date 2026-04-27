@@ -38,7 +38,15 @@ This repo now includes a runnable devcontainer baseline:
 
 - `.devcontainer/devcontainer.json`
 - `.devcontainer/postCreate.sh`
-- `Dockerfile`
+- `Dockerfile` (for this shared-infra repository itself)
+
+For target repositories bootstrapped from shared-infra, the container build file is:
+
+- `.devcontainer/Dockerfile` (provisioned from [`templates/.devcontainer/Dockerfile.template`](templates/.devcontainer/Dockerfile.template:1))
+
+The target `.devcontainer/Dockerfile` baseline includes:
+- Node.js 22 (via `mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm`)
+- Python 3 (`python3`, `python3-pip`, `python3-venv`)
 
 Beads installation path is pinned to:
 
