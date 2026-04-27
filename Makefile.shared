@@ -5,7 +5,7 @@ AGENT_RUNTIME ?= container-beads
 SELF_MAKEFILE ?= Makefile.shared
 BEADS_UI_PORT ?= 3002
 
-.PHONY: verify-layout verify-skill verify-templates show-classification project-bootstrap dolt-start mem-ready mem-show mem-claim mem-close mem-handoff mem-next mem-active mem-ops mem-all mem-wallet mem-snapshot mem-recover mem-restart beads-ui beads-ui-stop beads-ui-restart beads-ui-up post-rebuild-check agent-runtime-detect agent-runtime-resolve agent-runtime-check agent-init agent-repro agent-qa-check agent-append-note agent-comment-checklist web-presale web-presale-build web-presale-preview refresh-test-site
+.PHONY: verify-layout verify-skill verify-templates show-classification target-bootstrap target-refresh verify-target-agent-setup project-bootstrap dolt-start mem-ready mem-show mem-claim mem-close mem-handoff mem-next mem-active mem-ops mem-all mem-wallet mem-snapshot mem-recover mem-restart beads-ui beads-ui-stop beads-ui-restart beads-ui-up post-rebuild-check agent-runtime-detect agent-runtime-resolve agent-runtime-check agent-init agent-repro agent-qa-check agent-append-note agent-comment-checklist web-presale web-presale-build web-presale-preview refresh-test-site
 
 verify-layout:
 	@./scripts/verify_layout.sh
@@ -15,6 +15,7 @@ verify-skill:
 
 verify-templates:
 	@test -f templates/.devcontainer/devcontainer.json.template
+	@test -f templates/.devcontainer/Dockerfile.template
 	@test -f templates/.devcontainer/postCreate.sh.template
 	@test -f templates/.vscode/settings.json.template
 	@test -f templates/.vscode/mcp.json.template
@@ -23,6 +24,18 @@ verify-templates:
 
 show-classification:
 	@sed -n '1,260p' docs/skills_and_components_classification.md
+
+target-bootstrap:
+	@if [ -z "$(TARGET_ROOT)" ]; then echo "Usage: make -f Makefile.shared target-bootstrap TARGET_ROOT=/path/to/target-repo [SHARED_ROOT=/path/to/shared-infra]"; exit 1; fi
+	@./scripts/shared_infra_sync.sh --mode bootstrap --target-root "$(TARGET_ROOT)" --shared-root "$(if $(SHARED_ROOT),$(SHARED_ROOT),.)"
+
+target-refresh:
+	@if [ -z "$(TARGET_ROOT)" ]; then echo "Usage: make -f Makefile.shared target-refresh TARGET_ROOT=/path/to/target-repo [SHARED_ROOT=/path/to/shared-infra]"; exit 1; fi
+	@./scripts/shared_infra_sync.sh --mode refresh --target-root "$(TARGET_ROOT)" --shared-root "$(if $(SHARED_ROOT),$(SHARED_ROOT),.)"
+
+verify-target-agent-setup:
+	@if [ -z "$(TARGET_ROOT)" ]; then echo "Usage: make -f Makefile.shared verify-target-agent-setup TARGET_ROOT=/path/to/target-repo"; exit 1; fi
+	@./scripts/verify_target_agent_setup.sh --target-root "$(TARGET_ROOT)"
 
 project-bootstrap:
 	@echo "Bootstrapping Beads in current repo with prefix $(PREFIX)..."

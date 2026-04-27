@@ -1,7 +1,7 @@
 {
   "name": "agrc-shared-infra-dev",
   "build": {
-    "dockerfile": "Dockerfile",
+    "dockerfile": ".devcontainer/Dockerfile",
     "context": ".."
   },
   "mounts": [

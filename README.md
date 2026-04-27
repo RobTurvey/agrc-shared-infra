@@ -67,6 +67,63 @@ Then reference shared content from your target repository.
 Copy required files from this repo into your project if submodules are not allowed.
 Track source commit hash in your repo notes for traceability.
 
+### One-command target repo bootstrap and refresh
+
+Use the shared make targets to install/update common agent setup in a target repository:
+
+```bash
+# First-time setup (non-destructive; creates missing baseline files)
+make -f Makefile.shared target-bootstrap TARGET_ROOT=/path/to/target-repo
+
+# Ongoing updates (sync shared-managed assets; backups written for changed files)
+make -f Makefile.shared target-refresh TARGET_ROOT=/path/to/target-repo
+
+# Verify required agent baseline exists in target repository
+make -f Makefile.shared verify-target-agent-setup TARGET_ROOT=/path/to/target-repo
+```
+
+Notes:
+- Bootstrap does not overwrite existing files in target repos.
+- Refresh updates shared-managed files and writes `*.shared-infra.bak.<timestamp>` backups before replacement.
+- A sync lock file is written to `.agent/shared-infra.lock` in the target repo.
+
+#### If target repo does not have `Makefile.shared` yet
+
+Run from inside the target repo and point `make` at a temporary clone of shared-infra:
+
+```bash
+git clone --depth 1 https://github.com/RobTurvey/agrc-shared-infra.git /tmp/agrc-shared-infra
+make -f /tmp/agrc-shared-infra/Makefile.shared target-bootstrap TARGET_ROOT="$(pwd)" SHARED_ROOT=/tmp/agrc-shared-infra
+make -f /tmp/agrc-shared-infra/Makefile.shared verify-target-agent-setup TARGET_ROOT="$(pwd)"
+```
+
+### Pre-devcontainer bootstrap (critical first-time flow)
+
+When a target repo has no agent/devcontainer setup yet, run these **before** trying to build or reopen in container:
+
+1. Clone shared-infra locally.
+2. Run [`target-bootstrap`](Makefile.shared:27) against the target repo.
+3. Run [`verify-target-agent-setup`](Makefile.shared:35).
+4. Confirm these files now exist in the target repo:
+   - [`.devcontainer/devcontainer.json`](templates/.devcontainer/devcontainer.json.template:1)
+   - [`.devcontainer/Dockerfile`](templates/.devcontainer/Dockerfile.template:1)
+   - [`.devcontainer/postCreate.sh`](templates/.devcontainer/postCreate.sh.template:1)
+
+After those files are present, open the target repo in VS Code and run **Dev Containers: Reopen in Container**.
+
+Post-container first session:
+- Run runtime initialization from the target repo `Makefile.workteam`:
+  - `make agent-runtime-resolve`
+  - `make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/roo|agrc/claude>`
+- If Beads UI is needed, start it from a repo that has [`beads-ui-up`](Makefile.shared:256) available (for example shared-infra) or via `npx beads-ui` in the target container.
+
+Later refresh (same pattern):
+
+```bash
+make -f /tmp/agrc-shared-infra/Makefile.shared target-refresh TARGET_ROOT="$(pwd)" SHARED_ROOT=/tmp/agrc-shared-infra
+make -f /tmp/agrc-shared-infra/Makefile.shared verify-target-agent-setup TARGET_ROOT="$(pwd)"
+```
+
 ## Verification
 
 Run both checks before tagging a release:
