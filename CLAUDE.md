@@ -1,6 +1,18 @@
-# Project Instructions for AI Agents
+# Claude Code — Shared Infra Instructions
 
-This file provides instructions and context for AI coding agents working on this project.
+Read [AGENTS.md](AGENTS.md) first. It is the source of truth for runtime, tracking, skills, and closeout.
+
+Role-specific rules are in [.agent/claude.md](.agent/claude.md).
+
+## Identity
+- Actor: `agrc/claude`
+- Session start: `export BD_ACTOR="agrc/claude"`
+
+## Mandatory Start
+```bash
+make agent-runtime-resolve
+make agent-init ISSUE=<id> ACTOR=agrc/claude
+```
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:ca08a54f -->
 ## Beads Issue Tracker
@@ -48,7 +60,6 @@ bd close <id>         # Complete work
 - NEVER say "ready to push when you are" - YOU must push
 - If push fails, resolve and retry until it succeeds
 <!-- END BEADS INTEGRATION -->
-
 
 ## Build & Test
 

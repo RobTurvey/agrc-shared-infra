@@ -1,6 +1,27 @@
-# Agent Instructions
+# Agent Instructions (Shared Infra Baseline)
+
+This repository is the shared source for common AGRC agent scaffolding.
 
 This project uses **bd** (beads) for issue tracking. Run `bd prime` for full workflow context.
+
+## Runtime Modes
+
+- `container-beads` (default): devcontainer runtime, Beads available.
+- `local-lite`: host-only runtime, no direct `bd` commands.
+
+## Session Start
+
+```bash
+make agent-runtime-resolve
+make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/roo|agrc/claude>
+```
+
+## Core Rules
+
+- Use Beads as system of record when in `container-beads`.
+- Keep milestone comments and structured notes current.
+- Use shared skills/templates from this repository as baseline for downstream repos.
+- Do not place project-specific business workflows into shared baseline docs/skills.
 
 ## Quick Reference
 
@@ -41,15 +62,6 @@ cp -rf source dest          # NOT: cp -r source dest
 
 This project uses **bd (beads)** for issue tracking. Run `bd prime` to see full workflow context and commands.
 
-### Quick Reference
-
-```bash
-bd ready              # Find available work
-bd show <id>          # View issue details
-bd update <id> --claim  # Claim work
-bd close <id>         # Complete work
-```
-
 ### Rules
 
 - Use `bd` for ALL task tracking — do NOT use TodoWrite, TaskCreate, or markdown TODO lists
@@ -82,3 +94,20 @@ bd close <id>         # Complete work
 - NEVER say "ready to push when you are" - YOU must push
 - If push fails, resolve and retry until it succeeds
 <!-- END BEADS INTEGRATION -->
+
+## Shared Guidance Docs
+
+- `docs/agent_setup_spec.md`
+- `docs/skills_and_components_classification.md`
+- `docs/beads_troubleshooting.md`
+
+## Closeout Reminder
+
+Validate shared baseline with:
+
+```bash
+cd shared-infra
+make -f Makefile.shared verify-layout
+make -f Makefile.shared verify-skill
+make -f Makefile.shared verify-templates
+```

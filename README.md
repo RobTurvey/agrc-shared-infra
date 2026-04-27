@@ -28,6 +28,7 @@ that are reusable across AGRC repositories.
   app-specific debug configs, and repository-local runbooks.
 
 See:
+- `docs/agent_setup_spec.md`
 - `docs/skills_and_components_classification.md`
 - `docs/beads_troubleshooting.md`
 
