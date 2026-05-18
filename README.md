@@ -10,6 +10,7 @@ to keep agent workflows consistent across projects.
 ## Baseline Contents
 
 - `.agents/skills/` canonical skill implementations.
+- Includes reusable brand/design handoff skills such as `brand-guidelines-builder`.
 - `.github/skills/` Copilot entrypoints for skill discovery.
 - `.agent/profiles/` runtime profile references.
 - `templates/` starter templates for new repositories.

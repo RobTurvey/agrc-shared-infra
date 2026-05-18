@@ -3,3 +3,8 @@
 .dolt/
 *.db
 .beads-credential-key
+
+# Local/import artifacts
+.git.submodule-pointer.bak
+beads-ui-*.tgz
+docs/brand-guidelines-builder.skill

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{BRAND_NAME}} / Design System v1</title>
+    <meta name="description" content="Tokens, type, spacing and component patterns extracted from the {{BRAND_NAME}} homepage prototype. Source of truth for dev handoff." />
+
+    <!-- Match the production fonts. Replace with whatever the prototype uses. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family={{PRIMARY_FONT_QUERY}}&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* === Tokens (copied from prototype) === */
+      :root {
+        /* {{TOKENS_ROOT}} */
+        /* Drop the prototype's :root block here verbatim so the page renders with the real values. */
+      }
+
+      /* === Reset + base === */
+      *, *::before, *::after { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--white, #ffffff);
+        color: var(--text, #17212b);
+        font-family: "Space Grotesk", system-ui, sans-serif;
+        font-size: 15px;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+      }
+      code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.85em; }
+
+      /* === Top strip === */
+      .strip {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--line, rgba(12, 18, 24, 0.12));
+      }
+      .strip__inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.25rem;
+      }
+      .strip__brand {
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+      }
+      .strip__brand em {
+        font-style: normal;
+        font-weight: 400;
+        color: var(--text-soft, #55616e);
+        margin-left: 0.5rem;
+      }
+      .strip__meta {
+        display: flex;
+        gap: 1.5rem;
+        font-size: 0.75rem;
+        color: var(--text-soft, #55616e);
+      }
+      .strip__meta span strong {
+        display: block;
+        color: var(--text, #17212b);
+        font-weight: 700;
+        font-size: 0.78rem;
+      }
+      .strip__cta {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.6rem 1rem;
+        background: var(--text, #17212b);
+        color: #fff;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        text-decoration: none;
+        border-radius: 6px;
+      }
+
+      /* === Section scaffolding === */
+      .section {
+        padding: clamp(3rem, 6vw, 5rem) 0;
+        border-bottom: 1px solid var(--line, rgba(12, 18, 24, 0.08));
+      }
+      .section__inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+      .section__head {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+        gap: 2.5rem;
+        margin-bottom: 2.5rem;
+      }
+      @media (max-width: 720px) {
+        .section__head { grid-template-columns: 1fr; gap: 1rem; }
+      }
+      .section__num {
+        display: block;
+        color: var(--teal-deep, #0c6f72);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        margin-bottom: 0.6rem;
+      }
+      .section__title {
+        margin: 0;
+        font-family: var(--font-display, "Space Grotesk"), sans-serif;
+        font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+        font-weight: 700;
+        line-height: 1.05;
+        letter-spacing: 0.01em;
+        text-transform: uppercase;
+      }
+      .section__intro {
+        margin: 0;
+        color: var(--text-soft, #55616e);
+        font-size: 1rem;
+        line-height: 1.55;
+      }
+
+      /* === Pattern card (reused by every component demo in section 08) === */
+      .pattern {
+        border: 1px solid var(--line, rgba(12, 18, 24, 0.08));
+        border-radius: 6px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        background: #fff;
+      }
+      .pattern__label {
+        display: block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--text-soft, #55616e);
+        margin-bottom: 1rem;
+      }
+      .pattern__notes {
+        display: block;
+        margin-top: 1.25rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--line, rgba(12, 18, 24, 0.08));
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 0.78rem;
+        line-height: 1.65;
+        color: var(--text-soft, #55616e);
+      }
+
+      /* === Swatches (section 02) === */
+      .swatch-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1rem;
+      }
+      .swatch {
+        border: 1px solid var(--line, rgba(12, 18, 24, 0.08));
+        border-radius: 6px;
+        overflow: hidden;
+      }
+      .swatch__chip {
+        height: 110px;
+      }
+      .swatch__body {
+        padding: 1rem;
+        display: grid;
+        gap: 0.3rem;
+      }
+      .swatch__name { font-weight: 700; font-size: 0.95rem; }
+      .swatch__hex {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.75rem;
+        color: var(--text-soft, #55616e);
+      }
+      .swatch__use { font-size: 0.78rem; color: var(--text-soft, #55616e); }
+
+      /* === Type specimens (section 03) === */
+      .type-row {
+        display: grid;
+        grid-template-columns: 140px minmax(0, 1fr) auto;
+        gap: 1.5rem;
+        align-items: baseline;
+        padding: 1.4rem 0;
+        border-top: 1px solid var(--line, rgba(12, 18, 24, 0.08));
+      }
+      .type-row__name {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--text-soft, #55616e);
+      }
+      .type-row__values {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+        color: var(--text-soft, #55616e);
+      }
+
+      /* === Spacing bars (section 04) === */
+      .spacing-row {
+        display: grid;
+        grid-template-columns: 140px minmax(0, 1fr) 90px;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.6rem 0;
+      }
+      .spacing-row__bar {
+        height: 16px;
+        background: var(--teal, #19a3a4);
+        border-radius: 2px;
+      }
+      .spacing-row__token,
+      .spacing-row__value {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.78rem;
+        color: var(--text-soft, #55616e);
+      }
+
+      /* === Icon helpers (section 06b — drop only if prototype has icons) === */
+      .icon {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        stroke: currentColor;
+        fill: none;
+        flex-shrink: 0;
+        vertical-align: -0.125em;
+      }
+      .icon-color-demo {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        margin: 1.25rem 0;
+      }
+      .icon-color-demo > div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.85rem;
+        padding: 1.4rem;
+        border-radius: 6px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+      .icon-color-demo .icon { width: 22px; height: 22px; }
+      .icon-color-demo__white {
+        background: #fff;
+        border: 1px solid var(--line, rgba(12, 18, 24, 0.08));
+        color: var(--teal-deep, #0c6f72);
+      }
+      .icon-color-demo__dark {
+        background: var(--steel-950, #0b1117);
+        color: #fff;
+      }
+      .icon-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 0.5rem;
+      }
+      .icon-tile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 1.1rem 0.8rem;
+        border: 1px solid var(--line, rgba(12, 18, 24, 0.08));
+        border-radius: 6px;
+      }
+      .icon-tile .icon { width: 32px; height: 32px; color: var(--teal-deep, #0c6f72); }
+      .icon-tile__name {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.7rem;
+        color: var(--text-soft, #55616e);
+      }
+
+      /* === Tailwind translation table (section 09) === */
+      .map-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+      }
+      .map-table th,
+      .map-table td {
+        padding: 0.9rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--line, rgba(12, 18, 24, 0.08));
+        vertical-align: top;
+      }
+      .map-table th {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--text-soft, #55616e);
+      }
+      .map-table code {
+        background: rgba(12, 18, 24, 0.06);
+        padding: 0.15rem 0.45rem;
+        border-radius: 4px;
+      }
+
+      @media (max-width: 640px) {
+        .strip__inner { padding: 0.8rem 1rem; gap: 0.75rem; }
+        .strip__meta { display: none; }
+        .spacing-row { grid-template-columns: 90px minmax(0, 1fr) 70px; gap: 0.7rem; }
+        .map-table th, .map-table td { padding: 0.6rem 0.5rem; font-size: 0.75rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- {{ICON_SPRITE}}
+         If the prototype has an SVG <symbol> sprite, paste it verbatim here.
+         Leave nothing in this comment block once filled. -->
+
+    <!-- Top strip header -->
+    <header class="strip">
+      <div class="strip__inner">
+        <div class="strip__brand">{{BRAND_NAME}} <em>Design System v1</em></div>
+        <div class="strip__meta">
+          <span>Status<strong>v1 · {{MONTH_YEAR}}</strong></span>
+          <span>Source<strong>{{SOURCE_PATH}}</strong></span>
+          <span>Stack<strong>{{STACK}}</strong></span>
+        </div>
+        <a class="strip__cta" href="{{PROTOTYPE_LINK}}">Homepage prototype →</a>
+      </div>
+    </header>
+
+    <!-- 01 / Voice -->
+    <section class="section" id="voice">
+      <div class="section__inner">
+        <div class="section__head">
+          <div>
+            <span class="section__num">01 / Voice</span>
+            <h2 class="section__title">{{VOICE_TITLE}}</h2>
+          </div>
+          <p class="section__intro">
+            {{VOICE_PARAGRAPH}}
+          </p>
+        </div>
+        <!-- Example sentence in the brand's actual H2 style -->
+        <p style="font-family: var(--font-display); font-size: clamp(1.4rem, 2.6vw, 2rem); text-transform: uppercase; line-height: 1.1; max-width: 26ch;">
+          {{VOICE_EXAMPLE}}
+        </p>
+      </div>
+    </section>
+
+    <!-- 02 / Color -->
+    <section class="section" id="color">
+      <div class="section__inner">
+        <div class="section__head">
+          <div>
+            <span class="section__num">02 / Color</span>
+            <h2 class="section__title">Palette</h2>
+          </div>
+          <p class="section__intro">
+            {{COLOR_INTRO}}
+          </p>
+        </div>
+        <div class="swatch-grid">
+          <!-- {{SWATCHES}}
+               Repeat the .swatch block per token. Group neutrals, then brand, then accent.
+               Each swatch chip uses the actual CSS variable so the colour stays in sync. -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 / Type -->
+    <section class="section" id="type">
+      <div class="section__inner">
+        <div class="section__head">
+          <div>
+            <span class="section__num">03 / Type</span>
+            <h2 class="section__title">Typography</h2>
+          </div>
+          <p class="section__intro">
+            {{TYPE_INTRO}}
+          </p>
+        </div>
+        <!-- {{TYPE_SPECIMENS}}
+             One .type-row per heading level + body + caption.
+             Each row: name on left, live specimen in middle, monospace values on right. -->
+      </div>
+    </section>
+
+    <!-- 04 / Spacing -->
+    <section class="section" id="spacing">
+      <div class="section__inner">
+        <div class="section__head">
+          <div>
+            <span class="section__num">04 / Spacing</span>
+            <h2 class="section__title">Spacing scale</h2>
+          </div>
+          <p class="section__intro">
+            {{SPACING_INTRO}}
+          </p>
+        </div>
+        <!-- {{SPACING_ROWS}}
+             One .spacing-row per token. The bar width should be set inline (e.g. width: 4px) so
+             the visual matches the value. -->
+      </div>
+    </section>
+
+    <!-- 05 / Radii -->
+    <section class="section" id="radii">
+      <div class="section__inner">
+        <div class="section__head">
+          <div>
+            <span class="section__num">05 / Radii</span>
+            <h2 class="section__title">Corner radii</h2>
+          </div>
+          <p class="section__intro">
+            {{RADII_INTRO}}
+          </p>
+        </div>
+        <!-- {{RADII_GRID}}
+             Three or four boxes showing each radius value visually + label + value. -->
+      </div>
+    </section>
+
+    <!-- 06 / Shadows -->
+    <section class="section" id="shadows">
+      <div class="section__inner">
+        <div class="section__head">
+          <div>
+            <span class="section__num">06 / Shadows</span>
+            <h2 class="section__title">Elevation</h2>
+          </div>
+          <p class="section__intro">
+            {{SHADOWS_INTRO}}
+          </p>
+        </div>
+        <!-- {{SHADOWS_GRID}}
+             Sample cards showing each elevation level + token name + values + "use for" note. -->
+      </div>
+    </section>
+
+    <!-- 06b / Iconography (REMOVE THIS SECTION if the prototype has no SVG icons) -->
+    <section class="section" id="icons">
+      <div class="section__inner">
+        <div class="section__head">
+          <div>
+            <span class="section__num">06b / Iconography</span>
+            <h2 class="section__title">Icons</h2>
+          </div>
+          <p class="section__intro">
+            {{ICONS_INTRO}}
+          </p>
+        </div>
+        <!-- Colour reactivity demo: same icon, two contexts -->
+        <div class="icon-color-demo">
+          <div class="icon-color-demo__white">
+            <svg class="icon" aria-hidden="true"><use href="#{{HERO_ICON_ID}}"></use></svg>
+            <span>on white</span>
+          </div>
+          <div class="icon-color-demo__dark">
+            <svg class="icon" aria-hidden="true"><use href="#{{HERO_ICON_ID}}"></use></svg>
+            <span>on dark</span>
+          </div>
+        </div>
+        <!-- {{ICON_TILES}}
+             A grid of every icon labelled with its #id. -->
+      </div>
+    </section>
+
+    <!-- 07 / Layout -->
+    <section class="section" id="layout">
+      <div class="section__inner">
+        <div class="section__head">
+          <div>
+            <span class="section__num">07 / Layout</span>
+            <h2 class="section__title">Breakpoints</h2>
+          </div>
+          <p class="section__intro">
+            {{LAYOUT_INTRO}}
+          </p>
+        </div>
+        <!-- {{BREAKPOINTS_TABLE}}
+             Table of breakpoints: name | px | what changes at this size. -->
+      </div>
+    </section>
+
+    <!-- 08 / Patterns -->
+    <section class="section" id="components">
+      <div class="section__inner">
+        <div class="section__head">
+          <div>
+            <span class="section__num">08 / Patterns</span>
+            <h2 class="section__title">Components</h2>
+          </div>
+          <p class="section__intro">
+            Composed examples showing how the tokens land. Each is a pattern referenced in the
+            homepage prototype.
+          </p>
+        </div>
+        <!-- {{PATTERNS}}
+             One .pattern block per reusable composition. Use the prototype's actual classes.
+             Each block = label + live render + monospace pattern__notes with values + "use for". -->
+      </div>
+    </section>
+
+    <!-- 09 / Handoff -->
+    <section class="section" id="tailwind" style="border-bottom: 0;">
+      <div class="section__inner">
+        <div class="section__head">
+          <div>
+            <span class="section__num">09 / Handoff</span>
+            <h2 class="section__title">Tailwind translation</h2>
+          </div>
+          <p class="section__intro">
+            {{HANDOFF_INTRO}}
+          </p>
+        </div>
+        <table class="map-table">
+          <thead>
+            <tr>
+              <th>Token</th>
+              <th>Production value</th>
+              <th>Tailwind equivalent</th>
+              <th>Different from default?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- {{HANDOFF_ROWS}}
+                 One row per token. Honest about what's a default vs what needs adding. -->
+          </tbody>
+        </table>
+        <!-- {{HANDOFF_NOTES}}
+             Anything extra dev needs: font loading URLs, darkMode config, plugins, etc. -->
+      </div>
+    </section>
+  </body>
+</html>
