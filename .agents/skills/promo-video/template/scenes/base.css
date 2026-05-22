@@ -1,0 +1,128 @@
+/* Shared base styling for the square promo GIF scenes.
+   Each scene is a 640x640 stage. All CSS animations run on a single 4000ms
+   infinite loop so the frame capture can seek them deterministically. The
+   .flash overlay is opaque at the loop boundary, hiding the seam.
+
+   >>> Set the brand palette in :root per client. Keep --bg in sync with BG
+       in assemble.mjs, and update the radial-glow rgba() in .stage. <<< */
+
+:root {
+  --bg: #0b0b0f; /* scene background - must match BG in assemble.mjs */
+  --ink: #14140f;
+  --accent: #f5a623; /* primary brand colour */
+  --accent-deep: #d98a0e;
+  --gold: #f5c842;
+  --white: #ffffff;
+  --dim: #9aa0aa;
+  --line: rgba(255, 255, 255, 0.1);
+  --card: rgba(255, 255, 255, 0.05);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 640px;
+  height: 640px;
+}
+
+body {
+  font-family: -apple-system, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--white);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.stage {
+  position: relative;
+  width: 640px;
+  height: 640px;
+  overflow: hidden;
+  /* The rgba() here is the accent colour at low alpha - update with the palette. */
+  background:
+    radial-gradient(620px 460px at 50% 30%, rgba(245, 166, 35, 0.16), transparent 72%),
+    var(--bg);
+}
+
+/* Loop-seam flash: brand colour, opaque at the loop boundary only. */
+.flash {
+  position: absolute;
+  inset: 0;
+  z-index: 90;
+  background: var(--accent);
+  pointer-events: none;
+  animation: flash 4000ms linear infinite;
+}
+
+@keyframes flash {
+  0% { opacity: 1; }
+  6% { opacity: 0; }
+  94% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Brand wordmark, top of the scene. */
+.brandrow {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 5;
+}
+
+.brandrow img {
+  height: 30px;
+  width: auto;
+  opacity: 0.92;
+}
+
+/* Footer tagline + call-to-action URL. */
+.foot {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 42px;
+  text-align: center;
+  z-index: 5;
+}
+
+.foot .tag {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+
+.foot .url {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+/* Pill badge. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(245, 166, 35, 0.12);
+  border: 1px solid rgba(245, 166, 35, 0.4);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Example beat</title>
+<link rel="stylesheet" href="base-seq.css" />
+<!--
+  A minimal reference beat. Copy this file per beat.
+  Rules: one-shot animations "<name> 4000ms linear 350ms 1 both" (the 350ms
+  delay lets the opening wipe clear; "both" holds the end state). Add a
+  .caption for the hook line and end with .wipe so beats join seamlessly.
+  To reuse a square scene, paste its component CSS into a .group wrapper and
+  transform: scale() it up to fill the portrait frame.
+-->
+<style>
+  .headline {
+    text-align: center;
+    font-size: 96px;
+    font-weight: 900;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    opacity: 0;
+    animation: rise 4000ms linear 350ms 1 both;
+  }
+  .headline .a { color: var(--accent); }
+  @keyframes rise {
+    0%, 10% { opacity: 0; transform: translateY(42px); }
+    24%, 100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .panel {
+    margin-top: 54px;
+    width: 780px;
+    padding: 66px 48px;
+    border-radius: 28px;
+    background: var(--card);
+    border: 2px solid var(--line);
+    text-align: center;
+    font-size: 38px;
+    font-weight: 800;
+    color: var(--dim);
+    opacity: 0;
+    animation: panelin 4000ms linear 350ms 1 both;
+  }
+  @keyframes panelin {
+    0%, 26% { opacity: 0; transform: translateY(44px) scale(0.96); }
+    40%, 100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="brandrow"><img src="../assets/logo.svg" alt="Brand" /></div>
+
+  <div class="beat">
+    <div class="headline">BEAT <span class="a">ONE</span></div>
+    <div class="panel">Your scene content here</div>
+  </div>
+
+  <div class="foot">
+    <span class="tag">Tagline</span>
+    <span class="url">yourbrand.com</span>
+  </div>
+
+  <div class="caption"><span>Hook caption goes here</span></div>
+  <div class="wipe"></div>
+</div>
+</body>
+</html>

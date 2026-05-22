@@ -1,0 +1,18 @@
+{
+  "name": "promo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Promo asset build tooling - looping GIFs and a portrait sequence video",
+  "type": "module",
+  "scripts": {
+    "render": "node capture.mjs",
+    "assemble": "node assemble.mjs",
+    "build": "node capture.mjs && node assemble.mjs",
+    "render-seq": "node capture-seq.mjs",
+    "assemble-seq": "node assemble-seq.mjs",
+    "build-seq": "node capture-seq.mjs && node assemble-seq.mjs"
+  },
+  "dependencies": {
+    "puppeteer": "^23.11.1"
+  }
+}

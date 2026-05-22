@@ -1,0 +1,160 @@
+/* Shared base styling for the portrait sequence (the TikTok / Reels cut).
+   Every beat is a 1080x1920 stage rendered as one 5400ms clip: a brand-colour
+   wipe reveals the beat, its animation plays once and holds, then the wipe
+   covers it again. capture-seq.mjs writes beats back-to-back, so the wipes
+   join into one continuous sweep.
+
+   >>> Keep the :root palette identical to scenes/base.css. <<< */
+
+:root {
+  --bg: #0b0b0f;
+  --ink: #14140f;
+  --accent: #f5a623;
+  --accent-deep: #d98a0e;
+  --gold: #f5c842;
+  --white: #ffffff;
+  --dim: #9aa0aa;
+  --line: rgba(255, 255, 255, 0.1);
+  --card: rgba(255, 255, 255, 0.05);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 1080px;
+  height: 1920px;
+}
+
+body {
+  font-family: -apple-system, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--white);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.stage {
+  position: relative;
+  width: 1080px;
+  height: 1920px;
+  overflow: hidden;
+  /* rgba() is the accent colour at low alpha - update with the palette. */
+  background:
+    radial-gradient(940px 820px at 50% 46%, rgba(245, 166, 35, 0.2), transparent 70%),
+    var(--bg);
+}
+
+/* Brand wordmark, pinned near the top of every beat. */
+.brandrow {
+  position: absolute;
+  top: 128px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 5;
+}
+
+.brandrow img {
+  height: 48px;
+  width: auto;
+  opacity: 0.92;
+}
+
+/* Footer tagline + call-to-action URL. */
+.foot {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 132px;
+  text-align: center;
+  z-index: 5;
+}
+
+.foot .tag {
+  display: block;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.foot .url {
+  font-size: 27px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+/* Beat content fills the stage between brand and footer. */
+.beat {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+/* Hook caption, pinned just under the brand wordmark. Mirror the voiceover
+   line for that beat so the video reads on its own when muted. */
+.caption {
+  position: absolute;
+  top: 224px;
+  left: 0;
+  right: 0;
+  z-index: 6;
+  display: flex;
+  justify-content: center;
+  opacity: 0;
+  animation: capin 5400ms linear 1 both;
+}
+
+.caption span {
+  max-width: 900px;
+  padding: 13px 32px;
+  border-radius: 14px;
+  background: rgba(8, 8, 10, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: 0.015em;
+  text-transform: uppercase;
+  color: var(--white);
+  text-align: center;
+}
+
+@keyframes capin {
+  0%, 5% { opacity: 0; transform: translateY(-18px); }
+  12%, 100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Brand-colour wipe. Covers the stage at both clip boundaries and sweeps
+   upward off-screen in between. Each beat starts and ends fully covered, so
+   consecutive beats join into one continuous wipe across the video. */
+.wipe {
+  position: absolute;
+  inset: 0;
+  z-index: 90;
+  background: var(--accent);
+  pointer-events: none;
+  animation: wipe 5400ms linear 1 both;
+}
+
+@keyframes wipe {
+  0% { transform: translateY(0); }
+  6.5% { transform: translateY(-101%); }
+  49.9% { transform: translateY(-101%); }
+  50% { transform: translateY(101%); }
+  93.5% { transform: translateY(101%); }
+  100% { transform: translateY(0); }
+}

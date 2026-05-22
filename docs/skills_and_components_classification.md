@@ -23,9 +23,11 @@ A component is **project-specific** when any of the following is true:
 - `qa_task_review`
 - `skills_creator`
 - `skill_harvest`
+- `shared-skill-onboarding`
 - `support_incident`
 - `frontend-design`
 - `brand-guidelines-builder`
+- `promo-video`
 - `website-review`
 - `website_review` *(duplicate naming variant; consolidate to one canonical package)*
 - `ckm-brand`, `ckm-design`, `ckm-design-system`, `ckm-ui-styling`, `ui-ux-pro-max`
@@ -75,6 +77,8 @@ A component is **project-specific** when any of the following is true:
 ## Current Recommendation (Applied Baseline)
 
 - Move/maintain generic process and quality skills in `shared-infra`.
+- Keep shared skill intake and registration workflow in `shared-infra` (`shared-skill-onboarding`) to ensure deterministic skill onboarding.
 - Keep brand/design-system extraction skills (including `brand-guidelines-builder`) in `shared-infra` because they are reusable across domains.
+- Keep generic motion-content generation skills (including `promo-video`) in `shared-infra` because they are reusable across brands and products.
 - Keep AGRC auction and wallet operational skills in project repos.
 - Keep MCP templates shared; keep concrete MCP instances project-local.

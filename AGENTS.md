@@ -99,6 +99,7 @@ This project uses **bd (beads)** for issue tracking. Run `bd prime` to see full 
 
 - `docs/agent_setup_spec.md`
 - `docs/skills_and_components_classification.md`
+- `docs/skill_onboarding_process.md`
 - `docs/beads_troubleshooting.md`
 
 ## Closeout Reminder

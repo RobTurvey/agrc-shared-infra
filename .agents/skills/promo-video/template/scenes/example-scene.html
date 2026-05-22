@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Example scene</title>
+<link rel="stylesheet" href="base.css" />
+<!--
+  A minimal reference scene. Copy this file per scene and rebuild the content.
+  Rules: one .stage, all animations on the shared 4000ms infinite loop,
+  staggered with keyframe percentages, and a .flash overlay to hide the seam.
+-->
+<style>
+  .center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 4;
+  }
+
+  .headline {
+    text-align: center;
+    font-size: 58px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    opacity: 0;
+    animation: rise 4000ms linear infinite;
+  }
+  .headline .a { color: var(--accent); }
+  @keyframes rise {
+    0%, 8% { opacity: 0; transform: translateY(26px); }
+    18%, 100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .sub {
+    margin-top: 22px;
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: var(--dim);
+    opacity: 0;
+    animation: rise2 4000ms linear infinite;
+  }
+  @keyframes rise2 {
+    0%, 16% { opacity: 0; transform: translateY(20px); }
+    26%, 100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .cta {
+    margin-top: 30px;
+    padding: 16px 42px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-deep));
+    color: #0a0a0a;
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    opacity: 0;
+    animation:
+      rise3 4000ms linear infinite,
+      pulse 1200ms linear infinite;
+  }
+  @keyframes rise3 {
+    0%, 26% { opacity: 0; transform: translateY(20px); }
+    36%, 100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5), 0 0 0 0 rgba(245, 166, 35, 0.5); }
+    50% { box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5), 0 0 0 14px rgba(245, 166, 35, 0); }
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="brandrow"><img src="../assets/logo.svg" alt="Brand" /></div>
+
+  <div class="center">
+    <div class="headline">YOUR <span class="a">HEADLINE</span></div>
+    <div class="sub">One line of supporting copy</div>
+    <div class="cta">CALL TO ACTION</div>
+  </div>
+
+  <div class="foot">
+    <span class="tag">Tagline</span>
+    <span class="url">yourbrand.com</span>
+  </div>
+
+  <div class="flash"></div>
+</div>
+</body>
+</html>

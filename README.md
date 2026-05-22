@@ -10,7 +10,7 @@ to keep agent workflows consistent across projects.
 ## Baseline Contents
 
 - `.agents/skills/` canonical skill implementations.
-- Includes reusable brand/design handoff skills such as `brand-guidelines-builder`.
+- Includes reusable brand/design and motion handoff skills such as `brand-guidelines-builder` and `promo-video`.
 - `.github/skills/` Copilot entrypoints for skill discovery.
 - `.agent/profiles/` runtime profile references.
 - `templates/` starter templates for new repositories.
@@ -31,6 +31,7 @@ that are reusable across AGRC repositories.
 See:
 - `docs/agent_setup_spec.md`
 - `docs/skills_and_components_classification.md`
+- `docs/skill_onboarding_process.md`
 - `docs/beads_troubleshooting.md`
 
 ## Shared-Infra Devcontainer (Runnable)
