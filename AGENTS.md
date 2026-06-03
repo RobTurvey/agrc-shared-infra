@@ -13,7 +13,7 @@ This project uses **bd** (beads) for issue tracking. Run `bd prime` for full wor
 
 ```bash
 make agent-runtime-resolve
-make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/roo|agrc/claude>
+make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/codex|agrc/claude>
 ```
 
 ## Core Rules

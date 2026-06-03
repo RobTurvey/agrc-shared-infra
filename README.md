@@ -49,18 +49,21 @@ For target repositories bootstrapped from shared-infra, the container build file
 The target `.devcontainer/Dockerfile` baseline includes:
 - Node.js 22 (via `mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm`)
 - Python 3 (`python3`, `python3-pip`, `python3-venv`)
+- Codex CLI (`codex`) installed without credentials baked into the image
 
-Beads installation path is pinned to:
+Pinned install paths:
 
-`https://raw.githubusercontent.com/gastownhall/beads/main/scripts/install.sh`
+- Beads: `https://raw.githubusercontent.com/gastownhall/beads/main/scripts/install.sh`
+- Codex: `https://chatgpt.com/codex/install.sh`
 
-The URL is used in both image build and post-create fallback install flow.
+These URLs are used in image build and post-create fallback install flows.
 
 ### Open in Container
 
 1. Open this repository root in VS Code.
 2. Run **Dev Containers: Reopen in Container**.
-3. Post-create checks install/verify baseline tools (`bd`, `dolt`, `aws`, `make`, `jq`, `go`).
+3. Post-create checks install/verify baseline tools (`bd`, `codex`, `dolt`, `aws`, `make`, `jq`, `go`).
+4. Sign in to Codex at runtime with `codex login` or, for container/headless flows, `codex login --device-auth`.
 
 ## Consumption Patterns
 
@@ -101,7 +104,7 @@ Inside the target repo container:
 
 - Run runtime initialization from [`Makefile.workteam`](templates/Makefile.workteam.template:1):
   - `make agent-runtime-resolve`
-  - `make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/roo|agrc/claude>`
+  - `make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/codex|agrc/claude>`
 - Validate baseline files are in place (already covered by [`verify-target-agent-setup`](Makefile.shared:36)).
 - If Beads UI is needed, start it from a repo that has [`beads-ui-up`](Makefile.shared:256) available (for example shared-infra) or run `npx -y beads-ui@latest start --port 3002` in the target container.
 

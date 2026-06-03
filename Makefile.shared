@@ -112,7 +112,7 @@ agent-runtime-resolve:
 		exit 1; \
 	fi; \
 	$(MAKE) --no-print-directory -f $(SELF_MAKEFILE) agent-runtime-check AGENT_RUNTIME=$$detected; \
-	echo "Next: make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/roo> AGENT_RUNTIME=$$detected"
+	echo "Next: make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/codex|agrc/claude> AGENT_RUNTIME=$$detected"
 
 agent-runtime-check:
 	@if [ "$(AGENT_RUNTIME)" != "container-beads" ] && [ "$(AGENT_RUNTIME)" != "local-lite" ]; then \
@@ -127,7 +127,7 @@ agent-runtime-check:
 	fi
 
 agent-init:
-	@if [ -z "$(ISSUE)" ]; then echo "Usage: make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/roo>"; exit 1; fi
+	@if [ -z "$(ISSUE)" ]; then echo "Usage: make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/codex|agrc/claude>"; exit 1; fi
 	@$(MAKE) -f $(SELF_MAKEFILE) agent-runtime-check
 	@if [ "$(AGENT_RUNTIME)" = "container-beads" ]; then \
 		if [ -n "$(ACTOR)" ]; then BD_ACTOR="$(ACTOR)" bd update $(ISSUE) --claim --json >/dev/null; else bd update $(ISSUE) --claim --json >/dev/null; fi; \
@@ -171,7 +171,7 @@ post-rebuild-check:
 	fi
 	@$(MAKE) -f $(SELF_MAKEFILE) agent-repro
 	@$(MAKE) -f $(SELF_MAKEFILE) agent-qa-check
-	@echo "Post-rebuild checks complete. Next: make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/roo>"
+	@echo "Post-rebuild checks complete. Next: make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/codex|agrc/claude>"
 
 agent-qa-check:
 	@echo "QA gate checklist:" \

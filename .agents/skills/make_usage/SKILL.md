@@ -23,7 +23,7 @@ Provide consistent, safe execution of repository Make targets as the primary aut
 ## Standard Workflow
 1. Inspect goal and choose a Make target.
 2. Run runtime check: `make agent-runtime-check`.
-3. Run task init: `make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/roo>`.
+3. Run task init: `make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/codex|agrc/claude>`.
 4. Execute operational target (`agent-qa-check`, `agent-comment-checklist`, etc.).
 5. Complete closeout sequence (`bd export`, `git push`, `git status`).
 
@@ -40,4 +40,3 @@ Provide consistent, safe execution of repository Make targets as the primary aut
 - Target reference: `references/make_targets.md`
 - Execution checklist: `assets/make_run_checklist.md`
 - Suggestion helper: `scripts/suggest_make_command.py`
-

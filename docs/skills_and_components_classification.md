@@ -51,7 +51,7 @@ A component is **project-specific** when any of the following is true:
 - `.vscode/mcp.json` template with placeholder servers and disabled-by-default examples.
 - `.devcontainer/devcontainer.json` baseline with neutral extensions and post-create hook.
 - `.devcontainer/postCreate.sh` baseline bootstrap script with safe checks and placeholders.
-- `roo.yaml` template for multi-agent orchestration baseline.
+- Generic agent orchestration templates, including Codex-ready defaults.
 
 ### Project-local components
 - Debug launch configurations targeting project scripts (`.vscode/launch.json` entries that run project-specific files).

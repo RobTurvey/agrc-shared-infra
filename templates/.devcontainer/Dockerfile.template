@@ -1,8 +1,12 @@
 FROM mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl ca-certificates git jq make python3 python3-pip python3-venv \
+    curl ca-certificates git jq make python3 python3-pip python3-venv bubblewrap \
     && rm -rf /var/lib/apt/lists/*
 
 # Install beads CLI (bd)
 RUN curl -fsSL https://raw.githubusercontent.com/gastownhall/beads/main/scripts/install.sh | bash || true
+
+# Install Codex CLI without storing credentials in the image.
+RUN curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 CODEX_INSTALL_DIR=/usr/local/bin sh \
+    || echo "WARNING: Codex CLI install failed during image build; postCreate will retry."

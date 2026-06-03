@@ -31,6 +31,7 @@ required=(
   "AGENTS.md"
   "Makefile.workteam"
   ".agent/profiles"
+  ".agent/codex.md"
   ".agents/skills"
   ".github/skills"
   ".devcontainer/devcontainer.json"

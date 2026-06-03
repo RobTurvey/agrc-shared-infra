@@ -87,6 +87,25 @@ copy_file() {
   echo "SYNC: $dst"
 }
 
+copy_persona_if_missing_or_warn() {
+  local src="$1"
+  local dst="$2"
+  mkdir -p "$(dirname "$dst")"
+
+  if [[ ! -e "$dst" ]]; then
+    cp -f "$src" "$dst"
+    echo "ADD: $dst"
+    return 0
+  fi
+
+  if ! cmp -s "$src" "$dst"; then
+    echo "SKIP (persona differs, not overwritten): $dst"
+    return 0
+  fi
+
+  echo "SKIP (persona unchanged): $dst"
+}
+
 sync_tree() {
   local src_dir="$1"
   local dst_dir="$2"
@@ -121,6 +140,7 @@ echo "- target root: $TARGET_ROOT"
 sync_tree "$SHARED_ROOT/.agents/skills" "$TARGET_ROOT/.agents/skills"
 sync_tree "$SHARED_ROOT/.github/skills" "$TARGET_ROOT/.github/skills"
 sync_tree "$SHARED_ROOT/.agent/profiles" "$TARGET_ROOT/.agent/profiles"
+copy_persona_if_missing_or_warn "$SHARED_ROOT/.agent/codex.md" "$TARGET_ROOT/.agent/codex.md"
 
 # Baseline setup assets from templates
 copy_file "$SHARED_ROOT/templates/AGENTS.md.template" "$TARGET_ROOT/AGENTS.md"

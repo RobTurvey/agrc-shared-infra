@@ -6,7 +6,7 @@ description: Use this skill when the user asks to review another agent's complet
 # qa_task_review
 
 ## Purpose
-Run Roo-style QA reviews for completed implementation tasks with deterministic evidence and PASS/NITS/FAIL outcomes.
+Run Codex-ready QA reviews for completed implementation tasks with deterministic evidence and PASS/NITS/FAIL outcomes.
 
 ## When to Invoke
 - User asks to review Copilot/agent-delivered task work before handoff.

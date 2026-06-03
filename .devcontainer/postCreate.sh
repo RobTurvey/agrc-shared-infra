@@ -18,6 +18,7 @@ command -v jq >/dev/null || echo "Missing: jq"
 command -v dolt >/dev/null || echo "Missing: dolt"
 command -v aws >/dev/null || echo "Missing: aws"
 command -v npm >/dev/null || echo "Missing: npm"
+command -v codex >/dev/null || echo "Missing: codex"
 
 if command -v aws >/dev/null 2>&1; then
   echo "[postCreate] aws cli: $(aws --version 2>&1)"
@@ -51,4 +52,20 @@ if command -v bd >/dev/null 2>&1; then
 else
   echo "[postCreate] WARNING: bd still unavailable."
   echo "[postCreate] Set BD_INSTALL_CMD and rerun: bash .devcontainer/postCreate.sh"
+fi
+
+if command -v codex >/dev/null 2>&1; then
+  echo "[postCreate] codex installed: $(command -v codex)"
+else
+  echo "[postCreate] Codex CLI not found; attempting non-interactive install..."
+  mkdir -p "$HOME/.local/bin"
+  curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 CODEX_INSTALL_DIR="$HOME/.local/bin" sh || true
+  export PATH="$HOME/.local/bin:$PATH"
+  if command -v codex >/dev/null 2>&1; then
+    echo "[postCreate] codex installed: $(command -v codex)"
+  elif [ -x "$HOME/.local/bin/codex" ]; then
+    echo "[postCreate] codex installed: $HOME/.local/bin/codex"
+  else
+    echo "[postCreate] WARNING: codex still unavailable. Install manually or check network access."
+  fi
 fi

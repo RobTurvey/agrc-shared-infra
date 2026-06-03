@@ -20,4 +20,11 @@ if ! command -v bd >/dev/null 2>&1; then
   curl -fsSL https://raw.githubusercontent.com/gastownhall/beads/main/scripts/install.sh | bash || true
 fi
 
+if ! command -v codex >/dev/null 2>&1; then
+  echo "[postCreate] Installing Codex CLI..."
+  mkdir -p "$HOME/.local/bin"
+  curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 CODEX_INSTALL_DIR="$HOME/.local/bin" sh || true
+  export PATH="$HOME/.local/bin:$PATH"
+fi
+
 echo "[postCreate] Bootstrap complete"

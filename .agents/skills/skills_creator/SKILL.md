@@ -51,7 +51,7 @@ Create discoverable, reusable, and testable skills with strong activation metada
 ## Cross-Agent Registration
 - Shared location: `.agents/skills/<skill-name>/`.
 - Copilot location: `.github/skills/<skill-name>/SKILL.md`.
-- Roo/Claude can point to the shared `.agents/skills/` path.
+- Codex and Claude can point to the shared `.agents/skills/` path.
 - Keep global path compatibility in mind for user-level skills: `~/.agents/skills/<skill-name>/`.
 
 ## Context Hygiene Rules
@@ -105,4 +105,3 @@ Use a right-sized loop based on available tooling:
 - Q&A source of truth: `references/skills_create.md`
 - Q&A implementation summary: `references/skills_creat_summary.md`
 - Gold-standard blueprint: `assets/blueprint_analyze_logs/`
-

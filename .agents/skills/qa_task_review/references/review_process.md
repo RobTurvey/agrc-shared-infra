@@ -1,7 +1,7 @@
-# QA Task Review Process (Roo)
+# QA Task Review Process (Codex)
 
 ## Source of Truth
-- `.agent/roo.md` (QA Loop + Review Discipline)
+- `.agent/codex.md` (QA Loop + Review Discipline)
 - `docs/02-review-checklist.md`
 
 ## Steps

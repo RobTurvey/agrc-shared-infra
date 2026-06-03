@@ -2,7 +2,7 @@
 
 ## Runtime and Init
 - `make agent-runtime-check`
-- `make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/roo>`
+- `make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/codex|agrc/claude>`
 - `make post-rebuild-check`
 
 ## QA and Notes
@@ -20,5 +20,4 @@
 
 ## Runtime Override
 - `AGENT_RUNTIME=local-lite make agent-runtime-check`
-- `AGENT_RUNTIME=local-lite make agent-init ISSUE=<id> ACTOR=<agrc/roo>`
-
+- `AGENT_RUNTIME=local-lite make agent-init ISSUE=<id> ACTOR=<agrc/codex>`

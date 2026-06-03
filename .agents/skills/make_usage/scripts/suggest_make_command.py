@@ -3,7 +3,7 @@ import argparse
 
 SUGGESTIONS = {
     "runtime": "make agent-runtime-check",
-    "init": "make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/roo>",
+    "init": "make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/codex|agrc/claude>",
     "qa": "make agent-qa-check",
     "checklist": "make agent-comment-checklist ISSUE=<id>",
     "append-note": "make agent-append-note ISSUE=<id> NOTE=\"...\"",
@@ -29,4 +29,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

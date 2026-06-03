@@ -1,6 +1,6 @@
 # skills_creator implementation summary
 
-This document is the build-spec for creating or refactoring skills in a multi-agent environment (Copilot, Roo, Claude Code). It captures only implementation-critical guidance.
+This document is the build-spec for creating or refactoring skills in a multi-agent environment (Copilot, Codex, Claude Code). It captures only implementation-critical guidance.
 
 ## Objective
 - Produce reusable, discoverable skills with minimal context overhead.
@@ -72,4 +72,3 @@ This document is the build-spec for creating or refactoring skills in a multi-ag
 - The generated skill is discoverable, concise, and deterministic.
 - The package passes validator checks.
 - Cross-agent pathing and handoff notes are complete.
-

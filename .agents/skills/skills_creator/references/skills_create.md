@@ -1,7 +1,7 @@
 
-## Q: This question is for a multi agent setup GSithub copilot , Roo code and cluade code what would it look like ?
+## Q: This question is for a multi agent setup GitHub Copilot, Codex, and Claude Code what would it look like?
 
-In a multi-agent setup using GitHub Copilot, Roo Code, and Claude Code, the recommended directory structure leverages the Agent Skills open standard. This standard allows all three agents to share a unified set of specialized workflows while keeping their main context windows lean. 
+In a multi-agent setup using GitHub Copilot, Codex, and Claude Code, the recommended directory structure leverages the Agent Skills open standard. This standard allows all three agents to share a unified set of specialized workflows while keeping their main context windows lean.
 
 Unified Multi-Agent Directory Structure
 For a repository shared by multiple agents, you should store skills in a standard location that all three tools can scan. 
@@ -18,13 +18,12 @@ text
         └── assets/       # Examples and templates
 Use code with caution.
 
-Agent-Specific Integration 
-While .agents/skills/ is the emerging universal path, each tool has specific legacy paths it prioritizes: 
+Agent-Specific Integration
+While `.agents/skills/` is the shared canonical path, each tool may also have its own discovery path:
 
 GitHub Copilot: Scans .github/skills/ by default. You can point it to the shared .agents/ folder using the chat.agentSkillsLocations VS Code setting.
 Claude Code: Natively supports .claude/skills/ and follows the Agent Skills standard. It treats skills as "Level 2" context that it only loads when the SKILL.md description matches your request.
-Roo Code: Recognises .roo/skills/ but supports symbolic links. You can link your shared library using:
-ln -s .agents/skills/ ~/.roo/skills/shared-library 
+Codex: Uses the repository `.agents/skills/` baseline exposed in this shared-infra repo and can also load user-level skills from `~/.codex/skills/` when configured.
 
 Comparison: Skills vs. Custom Instructions
 To optimize performance across these agents, use a hybrid approach: 
@@ -36,17 +35,15 @@ Multi-Agent	Requires duplicate files for each agent.	One SKILL.md shared by all 
 Best Practices for This Setup
 Strict YAML Metadata: Ensure your SKILL.md has a clear name and description in the frontmatter. Agents use the description to decide whether to "activate" the skill.
 Keep it Modular: Limit SKILL.md to under 500 lines. Move heavy documentation into the references/ folder so agents only read it on demand.
-Use MCP for Complex Tools: If a skill requires interacting with external APIs (like Slack or Google Drive), define it as an MCP (Model Context Protocol) server. Both Claude Code and Roo Code can connect to the same MCP server to share tool execution. 
+Use MCP for Complex Tools: If a skill requires interacting with external APIs (like Slack or Google Drive), define it as an MCP (Model Context Protocol) server so compatible agents can share deterministic tool execution.
 
 
-## Q: The roo code symlink will only work in a container ?
+## Q: Will skill sharing only work in a container?
 
-While Roo Code's symlink support has historically been limited primarily to its rules/config files, you can still achieve a unified multi-agent structure without a container by leveraging native shared path support. 
+You can achieve a unified multi-agent structure without a container by relying on native shared path support and repository-managed skill folders.
 
 Unified Multi-Agent Setup (No Container)
-The most reliable way to share skills across GitHub Copilot, Roo Code, and Claude Code is to use the emerging ~/.agents/skills/ global directory, which all three tools are designed to scan natively. 
-Roo Code Docs
-Roo Code Docs
+The most reliable way to share skills across GitHub Copilot, Codex, and Claude Code is to use the repository `.agents/skills/` directory, plus `~/.agents/skills/` or tool-specific user-level directories where supported.
 text
 ~/.agents/skills/           <-- Global cross-agent shared folder
 └── shared-skill-name/
@@ -56,21 +53,21 @@ text
 Use code with caution.
 
 How Each Agent Connects to This Path
-You don't need symlinks if you use these specific integration methods for each tool:
-Roo Code: Natively prioritizes ~/.agents/skills/ alongside its own ~/.roo/skills/ directory. It automatically indexes both for cross-agent compatibility.
-Claude Code: Natively supports ~/.agents/skills/ as a "personal skills" location for sharing across different projects.
-GitHub Copilot: While it defaults to ~/.copilot/skills/, you can point it to your shared directory using the chat.agentSkillsLocations setting in VS Code to include your global .agents path. 
+You don't need symlinks if you use these integration methods for each tool:
+Codex: Keep canonical skills in `.agents/skills/` and mirror only the concise entrypoints needed by other tools.
+Claude Code: Use `.claude/skills/` or configured shared skill paths when a project needs Claude-specific discovery.
+GitHub Copilot: While it defaults to `.github/skills/`, you can point it to your shared directory using the `chat.agentSkillsLocations` setting in VS Code to include your global `.agents` path.
 
 Why Symlinks Often Fail Outside Containers
-Outside of a containerized environment, Roo Code's internal file scanner (often using ripgrep) has historically not followed symlinks for general file operations or deep skill indexing. If you must use a shared folder that is not in ~/.agents/, use hard links on macOS/Linux or directory junctions on Windows, as these are seen by applications as physical directories rather than shortcuts. 
+Outside of a containerized environment, tool file scanners may not follow symlinks consistently for general file operations or deep skill indexing. Prefer copied/mirrored shared-managed files, hard links on macOS/Linux, or directory junctions on Windows when a tool cannot read the canonical path directly.
 
 Alternative: Project-Level Parallelism
 If you prefer project-specific skills over global ones, mirror the structure inside your repository root: 
 .github/skills/: Best for GitHub Copilot.
 .claude/skills/: Best for Claude Code.
-.roo/skills/: Best for Roo Code. 
+.codex/skills/: Best for Codex-specific local experiments when the repository baseline is not enough.
 
-To avoid duplication here, use a single .agents/skills/ folder at your project root. Both Roo Code and Claude Code will automatically find it. 
+To avoid duplication here, use a single `.agents/skills/` folder at your project root and mirror only concise tool-specific entrypoints.
 
 ## Q: what about rules or workflows  or capabilities should these all be included in skill.md ?
 
@@ -79,7 +76,7 @@ In a multi-agent setup, you should not cram everything into SKILL.md. Instead, f
 The "Context Hygiene" Hierarchy
 To keep your agents fast and accurate, distribute information based on its scope:
 Type 	Content Example	Best Location	Agent Support
-Global Rules	"Always use Tabs," "No comments in PRs"	~/.claude/CLAUDE.md or ~/.roo/rules/	Claude Code, Roo Code
+Global Rules	"Always use Tabs," "No comments in PRs"	AGENTS.md, CLAUDE.md, or tool-specific instruction files	Codex, Claude Code
 Project Rules	Tech stack (React), Linting, Repo structure	.github/copilot-instructions.md	GitHub Copilot
 Capabilities	"How to debug logs," "Update SQL schema"	.agents/skills/your-skill/SKILL.md	All (via shared path)
 Complex Workflows	Multi-step deployment sequences	.agents/skills/your-skill/references/	All (referenced by SKILL.md)
@@ -92,7 +89,7 @@ The "Output": Precise specifications for what the final result should look like.
 
 2. Rules & Constraints (Use Instructions Files)
 Avoid putting "always-on" rules (e.g., "Don't use semicolons") into a skill. If a rule applies to everything the agent does, put it in a Custom Instructions file instead: 
-Roo Code: Use .roo/rules/ for directory-based instructions or a .roorules file.
+Codex: Use AGENTS.md and repository-local `.agent/` profiles for project workflow instructions.
 GitHub Copilot: Use .github/copilot-instructions.md.
 Claude Code: Use CLAUDE.md. 
 
@@ -108,7 +105,7 @@ Knowledge/Data: Put in references/ (Deep, on-demand)
 
 ## Q: ok now i want my agent team to develop this for themselves I have tried asking but they don't have the skills or knowledge to do it where you do how can i address this?
 
-To get your agent team (GitHub Copilot, Roo Code, and Claude Code) to develop their own skills, you need to provide them with a "Meta-Skill"—a set of instructions that teaches them how to use the Agent Skills open standard to expand their own capabilities. 
+To get your agent team (GitHub Copilot, Codex, and Claude Code) to develop their own skills, you need to provide them with a "Meta-Skill"—a set of instructions that teaches them how to use the Agent Skills open standard to expand their own capabilities.
 Here's how to help an agent team develop skills and workflows:
 The "Meta-Skill" Strategy
 Agents need a template and workflow because they can't "learn" from conversation history for long-term use. Some tools, like Gemini CLI, have a built-in skill-creator for this purpose. 
@@ -198,7 +195,7 @@ In the Gemini CLI, these slash commands can be used to interact with the skills 
 Create consistent, modular agent skills using a repeatable structure that keeps primary context small and loads deep references only when needed.
 
 ## Primary Agents
-- Roo
+- Codex
 - Copilot
 - Claude Code
 
@@ -262,7 +259,7 @@ description: Creates or refactors agent skills using a standard modular structur
 - [`docs/skills/README.md`](docs/skills/README.md)
 
 
-This is a solid "V1" draft. It gives them the What and the Where, but to make the agents truly autonomous and consistent across Roo, Copilot, and Claude Code, it needs more "How"—specifically regarding the technical handoffs between them.
+This is a solid "V1" draft. It gives them the What and the Where, but to make the agents truly autonomous and consistent across Codex, Copilot, and Claude Code, it needs more "How"—specifically regarding the technical handoffs between them.
 Here is what I would add to move this from a "template" to a "functional engine":
 1. Add "Discovery Logic"
 Agents often struggle to know which description will actually trigger them. Suggest adding a section on Activation Phrases.
@@ -270,7 +267,7 @@ Suggestion: Add a "Metadata Guidance" section. Tell the agent: "The description 
 2. Define the "Cross-Agent Handshake"
 Since you are using three different agents, the skill needs to know how to talk to each.
 Suggestion: Add a rule for Environment Detection.
-If Roo: Use .roo/rules for local constraints.
+If Codex: Use AGENTS.md and `.agent/` profiles for local constraints.
 If Claude: Use CLAUDE.md for project memory.
 If Copilot: Use .github/copilot-instructions.md.
 The skills_creator should be instructed to update these "entry point" files whenever a new skill is created so the other agents "see" it immediately.
@@ -308,7 +305,7 @@ analyze-logs/
 Use code with caution.
 
 2. The SKILL.md (The "Brain")
-This is the entry point. Notice the specific YAML description designed to trigger Roo, Copilot, or Claude.
+This is the entry point. Notice the specific YAML description designed to trigger Codex, Copilot, or Claude.
 markdown
 ---
 name: analyze-logs
@@ -368,14 +365,14 @@ markdown
 Use code with caution.
 
 Why this works for your team:
-For Roo Code: It sees the scripts/ and knows it has the execute_command capability to run the Python tool.
+For Codex: It sees the scripts/ and can run the deterministic Python tool from the workspace.
 For Claude Code: It reads the SKILL.md frontmatter and "activates" the skill only when logs are mentioned.
 For GitHub Copilot: The references/ folder provides the RAG (Retrieval-Augmented Generation) source it needs to answer "What does this error mean?" without guessing.
 
 
 ## Q: where do i put this example?
 
-To ensure all three agents (Roo, GitHub Copilot, and Claude Code) can access the blueprint, place it in a standardized shared directory within your repository or user profile. 
+To ensure all three agents (Codex, GitHub Copilot, and Claude Code) can access the blueprint, place it in a standardized shared directory within your repository or user profile. 
 
 1. Recommended Shared Locations
 The best practice is to use one of the following paths, as these are the primary "discovery zones" for modern AI agents:
@@ -391,7 +388,7 @@ Why: This makes the skill globally available to your agents regardless of which 
 If you choose the .agents/skills/ path, you may need to point specific tools to it:
 GitHub Copilot: Ensure the experimental Use Claude Skills setting is enabled in VS Code. It will automatically look for skills in .github/skills/, .claude/skills/, and .agents/skills/.
 Claude Code: It natively scans .claude/skills/ and ~/.claude/skills/. It also recognizes the .agents/ standard in newer versions.
-Roo Code: Place it in .roo/skills/ or use the common .agents/skills/ path. Roo is highly flexible and typically indexes any skills found in the project root's hidden configuration folders. 
+Codex: Use the common `.agents/skills/` path for repository skills, with tool-specific mirrors only when required.
 
 3. Implementation Steps
 Create the Folder:

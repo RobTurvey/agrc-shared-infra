@@ -9,7 +9,7 @@ Use this profile when running in a devcontainer where Beads is available.
 
 ## Startup Sequence
 1. `make agent-runtime-resolve`
-2. `make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/roo|agrc/claude>`
+2. `make agent-init ISSUE=<id> ACTOR=<agrc/copilot|agrc/codex|agrc/claude>`
 3. Run implementation and validation commands.
 
 ## Closeout
